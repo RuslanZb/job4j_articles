@@ -56,8 +56,8 @@ public class ArticleStore implements Store<Article>, AutoCloseable {
 
     private void initCacheProp() {
         try (var statement = connection.createStatement()) {
-            statement.execute("SET FILES WRITE DELAY 120000 MILLIS;" +
-                    "SET FILES CACHE SIZE 300000;");
+            statement.execute("SET FILES WRITE DELAY 120000 MILLIS;"
+                    + "SET FILES CACHE SIZE 300000;");
         } catch (Exception e) {
             LOGGER.error("Не удалось выполнить операцию: { }", e.getCause());
             throw new IllegalStateException();
