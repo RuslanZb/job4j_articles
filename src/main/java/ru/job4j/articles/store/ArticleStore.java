@@ -25,6 +25,7 @@ public class ArticleStore implements Store<Article>, AutoCloseable {
     public ArticleStore(Properties properties) {
         this.properties = properties;
         initConnection();
+        initCacheProp();
         initScheme();
     }
 
@@ -47,6 +48,16 @@ public class ArticleStore implements Store<Article>, AutoCloseable {
         try (var statement = connection.createStatement()) {
             var sql = Files.readString(Path.of("db/scripts", "articles.sql"));
             statement.execute(sql);
+        } catch (Exception e) {
+            LOGGER.error("Не удалось выполнить операцию: { }", e.getCause());
+            throw new IllegalStateException();
+        }
+    }
+
+    private void initCacheProp() {
+        try (var statement = connection.createStatement()) {
+            statement.execute("SET FILES WRITE DELAY 120000 MILLIS;" +
+                    "SET FILES CACHE SIZE 300000;");
         } catch (Exception e) {
             LOGGER.error("Не удалось выполнить операцию: { }", e.getCause());
             throw new IllegalStateException();
